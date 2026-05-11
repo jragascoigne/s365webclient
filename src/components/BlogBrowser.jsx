@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { apiBaseUrl } from '../config.js';
 import { getBlogs, getCategories, getCities, sortOptions } from '../api/blogs.js';
-import { formatNzDate } from '../utils/date.js';
+import { BlogSummaryCard } from './BlogSummaryCard.jsx';
 
 const pageSizeOptions = [5, 10];
 
@@ -11,54 +10,6 @@ function toLookup(items, key = 'categoryId') {
 
 function toggleSelection(current, value) {
   return current.includes(value) ? current.filter((item) => item !== value) : [...current, value];
-}
-
-function BlogImage({ src, alt }) {
-  const [failed, setFailed] = useState(false);
-
-  if (failed) {
-    return <div className="image-placeholder" aria-hidden="true">No image</div>;
-  }
-
-  return <img src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />;
-}
-
-function BlogCard({ blog, categoryLookup, cityLookup }) {
-  const categories = blog.categoryIds?.map((id) => categoryLookup[id] ?? `Category ${id}`) ?? [];
-  const creatorName = `${blog.creatorFirstName} ${blog.creatorLastName}`;
-
-  return (
-    <article className="blog-card">
-      <div className="blog-image-frame">
-        <BlogImage src={`${apiBaseUrl}/blogs/${blog.blogId}/image`} alt="" />
-      </div>
-
-      <div className="blog-card-body">
-        <div>
-          <p className="blog-meta">{formatNzDate(blog.creationDate)}</p>
-          <h3>{blog.title}</h3>
-        </div>
-
-        <div className="creator-row">
-          <div className="avatar-frame">
-            <BlogImage src={`${apiBaseUrl}/users/${blog.creatorId}/image`} alt="" />
-          </div>
-          <span>{creatorName}</span>
-        </div>
-
-        <div className="blog-detail-row">
-          <span>{cityLookup[blog.cityId] ?? `City ${blog.cityId}`}</span>
-          <span>{blog.numReactions} reactions</span>
-        </div>
-
-        <div className="tag-list" aria-label={`Categories for ${blog.title}`}>
-          {categories.map((category) => (
-            <span key={category}>{category}</span>
-          ))}
-        </div>
-      </div>
-    </article>
-  );
 }
 
 export function BlogBrowser() {
@@ -267,7 +218,7 @@ export function BlogBrowser() {
 
         <div className="blog-list">
           {visibleBlogs.map((blog) => (
-            <BlogCard key={blog.blogId} blog={blog} categoryLookup={categoryLookup} cityLookup={cityLookup} />
+            <BlogSummaryCard key={blog.blogId} blog={blog} categoryLookup={categoryLookup} cityLookup={cityLookup} />
           ))}
         </div>
 

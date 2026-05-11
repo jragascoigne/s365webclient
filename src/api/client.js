@@ -10,20 +10,32 @@ export class ApiError extends Error {
 }
 
 export async function request(path, options = {}) {
+  const isFileBody =
+    options.body instanceof FormData ||
+    options.body instanceof Blob ||
+    options.body instanceof ArrayBuffer;
+  const headers = {
+    Accept: 'application/json',
+    ...(!isFileBody ? { 'Content-Type': 'application/json' } : {}),
+    ...options.headers,
+  };
+
   const response = await fetch(`${apiBaseUrl}${path}`, {
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
     ...options,
+    headers,
   });
 
   const isJson = response.headers.get('content-type')?.includes('application/json');
-  const body = isJson ? await response.json() : await response.text();
+  const rawBody = response.status === 204 ? '' : await response.text();
+  const body = isJson && rawBody ? JSON.parse(rawBody) : rawBody;
 
   if (!response.ok) {
-    throw new ApiError(`API request failed with ${response.status}`, {
+    const detailMessage =
+      typeof body === 'string' && body.trim()
+        ? body.trim()
+        : response.statusText || `API request failed with ${response.status}`;
+
+    throw new ApiError(detailMessage, {
       status: response.status,
       details: body,
     });
