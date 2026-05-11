@@ -17,4 +17,4 @@ cp .env.example .env
 
 Then edit `VITE_API_BASE_URL` if the reference API uses a different URL.
 
-The assignment brief and working plan are in `docs/assignment-brief.md`.
+The assignment brief and working plan are in `docs/assignment-brief.md`. The user stories are summarized in `docs/user-stories.md`.

@@ -98,6 +98,14 @@ select {
   padding: clamp(32px, 6vw, 72px) 0;
 }
 
+.intro-section {
+  padding-bottom: 24px;
+}
+
+.browser-section {
+  padding-top: 0;
+}
+
 .section-header {
   max-width: 760px;
   margin-bottom: 24px;
@@ -151,6 +159,250 @@ select {
   padding-left: 6px;
 }
 
+.browser-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.filter-panel,
+.results-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.filter-panel {
+  display: grid;
+  gap: 18px;
+  padding: 18px;
+  position: sticky;
+  top: 16px;
+}
+
+.control-group {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.control-group label,
+.control-group legend {
+  color: #26322d;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.inline-control {
+  display: flex;
+  gap: 8px;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #bac5bd;
+  border-radius: 6px;
+  padding: 0 10px;
+  color: #17211e;
+  background: #fff;
+}
+
+button {
+  min-height: 40px;
+  border: 1px solid var(--accent-strong);
+  border-radius: 6px;
+  padding: 0 14px;
+  color: #fff;
+  background: var(--accent-strong);
+  cursor: pointer;
+}
+
+button:disabled {
+  border-color: #c6cec8;
+  color: #7f8982;
+  background: #eef1ed;
+  cursor: not-allowed;
+}
+
+.secondary-button {
+  color: var(--accent-strong);
+  background: #eef6f3;
+}
+
+.checkbox-grid {
+  display: grid;
+  gap: 8px;
+  max-height: 210px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.checkbox-grid label {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 8px;
+  align-items: start;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.checkbox-grid input {
+  min-height: 18px;
+  margin: 1px 0 0;
+}
+
+.split-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.results-panel {
+  padding: 18px;
+}
+
+.results-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.results-toolbar h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.results-toolbar p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.notice {
+  padding: 14px;
+  border: 1px solid #d3d9ce;
+  border-radius: 6px;
+  color: #516052;
+  background: #f4f7f1;
+}
+
+.notice.error {
+  border-color: #e4b3aa;
+  color: #8f3124;
+  background: #fff1ef;
+}
+
+.blog-list {
+  display: grid;
+  gap: 14px;
+}
+
+.blog-card {
+  display: grid;
+  grid-template-columns: 172px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.blog-image-frame {
+  aspect-ratio: 4 / 3;
+  background: #edf1ed;
+}
+
+.blog-image-frame img,
+.avatar-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.image-placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: #718078;
+  font-size: 0.8rem;
+  background: #edf1ed;
+}
+
+.blog-card-body {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.blog-card h3 {
+  margin: 0;
+  color: #17211e;
+  font-size: 1.18rem;
+  line-height: 1.2;
+}
+
+.blog-meta {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 0.83rem;
+}
+
+.creator-row,
+.blog-detail-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.avatar-frame {
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #edf1ed;
+  flex: 0 0 auto;
+}
+
+.blog-detail-row {
+  justify-content: space-between;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-list span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: #254638;
+  background: #e8f2ed;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.pagination-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
 @media (max-width: 760px) {
   .top-bar {
     align-items: flex-start;
@@ -159,5 +411,19 @@ select {
 
   .status-grid {
     grid-template-columns: 1fr;
+  }
+
+  .browser-layout,
+  .blog-card {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-panel {
+    position: static;
+  }
+
+  .inline-control,
+  .results-toolbar {
+    flex-direction: column;
   }
 }
