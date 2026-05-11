@@ -9,7 +9,6 @@ import { MyBlogsPage } from "./pages/MyBlogsPage.jsx";
 import { ProfilePage } from "./pages/ProfilePage.jsx";
 import { EditProfilePage } from "./pages/EditProfilePage.jsx";
 import { RegisterPage } from "./pages/RegisterPage.jsx";
-import { SetupPage } from "./pages/SetupPage.jsx";
 import { ProtectedRoute } from "./components/ProtectedRoute.jsx";
 import { Button } from "./components/ui/button.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
@@ -51,7 +50,6 @@ export default function App() {
 							Profile
 						</NavLink>
 					)}
-					<NavLink to="/setup">Setup</NavLink>
 					{isAuthenticated ? (
 						<Button
 							className="nav-button"
