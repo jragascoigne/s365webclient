@@ -2,18 +2,21 @@ import { Link } from 'react-router-dom';
 import { apiBaseUrl } from '../config.js';
 import { formatNzDate } from '../utils/date.js';
 import { RemoteImage } from './RemoteImage.jsx';
+import { Badge } from './ui/badge.jsx';
+import { Button } from './ui/button.jsx';
+import { Card, CardContent } from './ui/card.jsx';
 
 export function BlogSummaryCard({ blog, categoryLookup, cityLookup }) {
   const categories = blog.categoryIds?.map((id) => categoryLookup[id] ?? `Category ${id}`) ?? [];
   const creatorName = `${blog.creatorFirstName} ${blog.creatorLastName}`;
 
   return (
-    <article className="blog-card">
+    <Card className="blog-card overflow-hidden">
       <div className="blog-image-frame">
         <RemoteImage src={`${apiBaseUrl}/blogs/${blog.blogId}/image`} alt="" />
       </div>
 
-      <div className="blog-card-body">
+      <CardContent className="blog-card-body p-4">
         <div>
           <p className="blog-meta">{formatNzDate(blog.creationDate)}</p>
           <h3>
@@ -25,7 +28,9 @@ export function BlogSummaryCard({ blog, categoryLookup, cityLookup }) {
           <div className="avatar-frame">
             <RemoteImage src={`${apiBaseUrl}/users/${blog.creatorId}/image`} alt="" />
           </div>
-          <span>{creatorName}</span>
+          <Link className="text-link" to={`/users/${blog.creatorId}`}>
+            {creatorName}
+          </Link>
         </div>
 
         <div className="blog-detail-row">
@@ -35,14 +40,16 @@ export function BlogSummaryCard({ blog, categoryLookup, cityLookup }) {
 
         <div className="tag-list" aria-label={`Categories for ${blog.title}`}>
           {categories.map((category) => (
-            <span key={category}>{category}</span>
+            <Badge key={category} variant="secondary">
+              {category}
+            </Badge>
           ))}
         </div>
 
-        <Link className="text-link" to={`/blogs/${blog.blogId}`}>
-          Read blog
-        </Link>
-      </div>
-    </article>
+        <Button asChild variant="link" className="fit-link text-link">
+          <Link to={`/blogs/${blog.blogId}`}>Read blog</Link>
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

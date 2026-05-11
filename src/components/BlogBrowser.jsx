@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getBlogs, getCategories, getCities, sortOptions } from '../api/blogs.js';
 import { BlogSummaryCard } from './BlogSummaryCard.jsx';
+import { Notice } from './Notice.jsx';
+import { Button } from './ui/button.jsx';
+import { Checkbox } from './ui/checkbox.jsx';
+import { Input } from './ui/input.jsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select.jsx';
 
 const pageSizeOptions = [5, 10];
 
@@ -100,70 +105,79 @@ export function BlogBrowser() {
         <div className="control-group">
           <label htmlFor="blog-search">Search title or description</label>
           <div className="inline-control">
-            <input
+            <Input
               id="blog-search"
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="coffee, hiking, art..."
             />
-            <button type="submit">Search</button>
+            <Button type="submit">Search</Button>
           </div>
         </div>
 
         <div className="control-group">
           <label htmlFor="sort-blogs">Sort</label>
-          <select id="sort-blogs" value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger id="sort-blogs" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <fieldset className="control-group">
           <legend>Cities</legend>
           <div className="checkbox-grid">
-            {cities.map((city) => (
+            {cities.map((city) => {
+              const value = String(city.cityId);
+              return (
               <label key={city.cityId}>
-                <input
-                  type="checkbox"
-                  checked={selectedCities.includes(String(city.cityId))}
-                  onChange={() => {
-                    setSelectedCities((current) => toggleSelection(current, String(city.cityId)));
+                <Checkbox
+                  checked={selectedCities.includes(value)}
+                  onCheckedChange={() => {
+                    setSelectedCities((current) => toggleSelection(current, value));
                     setPage(1);
                   }}
                 />
                 <span>{city.name}</span>
               </label>
-            ))}
+            );
+            })}
           </div>
         </fieldset>
 
         <fieldset className="control-group">
           <legend>Categories</legend>
           <div className="checkbox-grid">
-            {categories.map((category) => (
+            {categories.map((category) => {
+              const value = String(category.categoryId);
+              return (
               <label key={category.categoryId}>
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(String(category.categoryId))}
-                  onChange={() => {
-                    setSelectedCategories((current) => toggleSelection(current, String(category.categoryId)));
+                <Checkbox
+                  checked={selectedCategories.includes(value)}
+                  onCheckedChange={() => {
+                    setSelectedCategories((current) => toggleSelection(current, value));
                     setPage(1);
                   }}
                 />
                 <span>{category.name}</span>
               </label>
-            ))}
+            );
+            })}
           </div>
         </fieldset>
 
         <div className="split-controls">
           <div className="control-group">
             <label htmlFor="minimum-reactions">Minimum reactions</label>
-            <input
+            <Input
               id="minimum-reactions"
               type="number"
               min="0"
@@ -177,26 +191,30 @@ export function BlogBrowser() {
 
           <div className="control-group">
             <label htmlFor="page-size">Page size</label>
-            <select
-              id="page-size"
-              value={pageSize}
-              onChange={(event) => {
-                setPageSize(Number(event.target.value));
+            <Select
+              value={String(pageSize)}
+              onValueChange={(value) => {
+                setPageSize(Number(value));
                 setPage(1);
               }}
             >
-              {pageSizeOptions.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger id="page-size" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {pageSizeOptions.map((size) => (
+                  <SelectItem key={size} value={String(size)}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
-        <button className="secondary-button" type="button" onClick={clearFilters}>
+        <Button className="secondary-button" variant="secondary" type="button" onClick={clearFilters}>
           Reset
-        </button>
+        </Button>
       </form>
 
       <div className="results-panel">
@@ -210,10 +228,10 @@ export function BlogBrowser() {
           </p>
         </div>
 
-        {error && <div className="notice error">{error}</div>}
-        {loading && <div className="notice">Loading blogs...</div>}
+        {error && <Notice error>{error}</Notice>}
+        {loading && <Notice>Loading blogs...</Notice>}
         {!loading && !error && visibleBlogs.length === 0 && (
-          <div className="notice">No blogs match the current controls.</div>
+          <Notice>No blogs match the current controls.</Notice>
         )}
 
         <div className="blog-list">
@@ -223,18 +241,18 @@ export function BlogBrowser() {
         </div>
 
         <div className="pagination-bar" aria-label="Pagination">
-          <button type="button" disabled={safePage === 1} onClick={() => setPage(1)}>
+          <Button type="button" variant="outline" disabled={safePage === 1} onClick={() => setPage(1)}>
             First
-          </button>
-          <button type="button" disabled={safePage === 1} onClick={() => setPage((current) => current - 1)}>
+          </Button>
+          <Button type="button" variant="outline" disabled={safePage === 1} onClick={() => setPage((current) => current - 1)}>
             Previous
-          </button>
-          <button type="button" disabled={safePage === pageCount} onClick={() => setPage((current) => current + 1)}>
+          </Button>
+          <Button type="button" variant="outline" disabled={safePage === pageCount} onClick={() => setPage((current) => current + 1)}>
             Next
-          </button>
-          <button type="button" disabled={safePage === pageCount} onClick={() => setPage(pageCount)}>
+          </Button>
+          <Button type="button" variant="outline" disabled={safePage === pageCount} onClick={() => setPage(pageCount)}>
             Last
-          </button>
+          </Button>
         </div>
       </div>
     </section>

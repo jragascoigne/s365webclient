@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { getBlog, getCategories, getCities, updateBlog, uploadBlogImage } from '../api/blogs.js';
 import { BlogForm } from '../components/BlogForm.jsx';
+import { Notice } from '../components/Notice.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export function EditBlogPage() {
@@ -65,8 +66,8 @@ export function EditBlogPage() {
         <p className="eyebrow">Managing Blogs</p>
         <h2>Edit blog</h2>
       </div>
-      {loading && <div className="notice">Loading blog...</div>}
-      {error && <div className="notice error">{error}</div>}
+      {loading && <Notice>Loading blog...</Notice>}
+      {error && <Notice error>{error}</Notice>}
       {blog && (
         <BlogForm
           blog={blog}

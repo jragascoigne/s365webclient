@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Notice } from '../components/Notice.jsx';
+import { Button } from '../components/ui/button.jsx';
+import { Checkbox } from '../components/ui/checkbox.jsx';
+import { Input } from '../components/ui/input.jsx';
+import { Label } from '../components/ui/label.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { validateImage } from '../utils/validation.js';
 
@@ -75,20 +80,20 @@ export function RegisterPage() {
       </div>
 
       <form className="entity-form" onSubmit={handleSubmit}>
-        {error && <div className="notice error">{error}</div>}
+        {error && <Notice error>{error}</Notice>}
         <div className="split-controls">
           <div className="control-group">
-            <label htmlFor="first-name">First name</label>
-            <input id="first-name" value={form.firstName} onChange={(event) => updateField('firstName', event.target.value)} />
+            <Label htmlFor="first-name">First name</Label>
+            <Input id="first-name" value={form.firstName} onChange={(event) => updateField('firstName', event.target.value)} />
           </div>
           <div className="control-group">
-            <label htmlFor="last-name">Last name</label>
-            <input id="last-name" value={form.lastName} onChange={(event) => updateField('lastName', event.target.value)} />
+            <Label htmlFor="last-name">Last name</Label>
+            <Input id="last-name" value={form.lastName} onChange={(event) => updateField('lastName', event.target.value)} />
           </div>
         </div>
         <div className="control-group">
-          <label htmlFor="register-email">Email</label>
-          <input
+          <Label htmlFor="register-email">Email</Label>
+          <Input
             id="register-email"
             inputMode="email"
             value={form.email}
@@ -96,8 +101,8 @@ export function RegisterPage() {
           />
         </div>
         <div className="control-group">
-          <label htmlFor="register-password">Password</label>
-          <input
+          <Label htmlFor="register-password">Password</Label>
+          <Input
             id="register-password"
             type={showPassword ? 'text' : 'password'}
             value={form.password}
@@ -105,21 +110,21 @@ export function RegisterPage() {
           />
         </div>
         <label className="toggle-row">
-          <input type="checkbox" checked={showPassword} onChange={() => setShowPassword((value) => !value)} />
+          <Checkbox checked={showPassword} onCheckedChange={(checked) => setShowPassword(Boolean(checked))} />
           <span>Show password</span>
         </label>
         <div className="control-group">
-          <label htmlFor="profile-image">Profile image</label>
-          <input
+          <Label htmlFor="profile-image">Profile image</Label>
+          <Input
             id="profile-image"
             type="file"
             accept="image/png,image/jpeg,image/gif"
             onChange={(event) => setProfileImage(event.target.files?.[0] ?? null)}
           />
         </div>
-        <button type="submit" disabled={busy}>
+        <Button type="submit" disabled={busy}>
           {busy ? 'Creating...' : 'Register'}
-        </button>
+        </Button>
         <p className="form-note">
           Already registered? <Link to="/login">Log in</Link>
         </p>

@@ -32,6 +32,29 @@ export async function getBlogReactions(blogId) {
   return request(`/blogs/${blogId}/react`);
 }
 
+export async function addBlogReaction(blogId, reaction, token) {
+  return request(`/blogs/${blogId}/react`, {
+    method: 'POST',
+    headers: { 'X-Authorization': token },
+    body: JSON.stringify({ reaction }),
+  });
+}
+
+export async function removeBlogReaction(blogId, token) {
+  return request(`/blogs/${blogId}/react`, {
+    method: 'DELETE',
+    headers: { 'X-Authorization': token },
+  });
+}
+
+export async function addBlogComment(blogId, data, token) {
+  return request(`/blogs/${blogId}/comments`, {
+    method: 'POST',
+    headers: { 'X-Authorization': token },
+    body: JSON.stringify(data),
+  });
+}
+
 export async function createBlog(data, token) {
   return request('/blogs', {
     method: 'POST',

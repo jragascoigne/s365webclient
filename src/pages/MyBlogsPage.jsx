@@ -9,6 +9,17 @@ import {
   getCities,
 } from '../api/blogs.js';
 import { BlogSummaryCard } from '../components/BlogSummaryCard.jsx';
+import { Notice } from '../components/Notice.jsx';
+import { Button } from '../components/ui/button.jsx';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 function toLookup(items, key) {
@@ -28,6 +39,7 @@ export function MyBlogsPage() {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   async function loadMyBlogs() {
     setLoading(true);
@@ -79,11 +91,9 @@ export function MyBlogsPage() {
   const cityLookup = useMemo(() => toLookup(cities, 'cityId'), [cities]);
 
   async function handleDelete(blog) {
-    const confirmed = window.confirm(`Delete "${blog.title}"?`);
-    if (!confirmed) return;
-
     try {
       await deleteBlog(blog.blogId, auth.token);
+      setDeleteTarget(null);
       await loadMyBlogs();
     } catch (err) {
       setError(err.message || 'Could not delete blog. Blogs with comments cannot be deleted.');
@@ -97,9 +107,9 @@ export function MyBlogsPage() {
         <h2>My blogs</h2>
       </div>
 
-      {error && <div className="notice error">{error}</div>}
-      {loading && <div className="notice">Loading your blogs...</div>}
-      {!loading && items.length === 0 && <div className="notice">No created, reacted, or commented blogs yet.</div>}
+      {error && <Notice error>{error}</Notice>}
+      {loading && <Notice>Loading your blogs...</Notice>}
+      {!loading && items.length === 0 && <Notice>No created, reacted, or commented blogs yet.</Notice>}
 
       <div className="managed-list">
         {items.map(({ blog, roles }) => (
@@ -115,14 +125,37 @@ export function MyBlogsPage() {
                 <Link className="button-link" to={`/blogs/${blog.blogId}/edit`}>
                   Edit
                 </Link>
-                <button type="button" className="danger-button" onClick={() => handleDelete(blog)}>
+                <Button type="button" variant="destructive" className="danger-button" onClick={() => setDeleteTarget(blog)}>
                   Delete
-                </button>
+                </Button>
               </div>
             )}
           </div>
         ))}
       </div>
+
+      <Dialog open={Boolean(deleteTarget)} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete blog?</DialogTitle>
+            <DialogDescription>
+              {deleteTarget
+                ? `This will permanently delete "${deleteTarget.title}". Blogs with comments cannot be deleted.`
+                : 'This will permanently delete the selected blog.'}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="button" variant="destructive" onClick={() => deleteTarget && handleDelete(deleteTarget)}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

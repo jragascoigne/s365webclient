@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createBlog, getCategories, getCities, uploadBlogImage } from '../api/blogs.js';
 import { BlogForm } from '../components/BlogForm.jsx';
+import { Notice } from '../components/Notice.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export function CreateBlogPage() {
@@ -47,7 +48,7 @@ export function CreateBlogPage() {
         <p className="eyebrow">Managing Blogs</p>
         <h2>Create a new blog</h2>
       </div>
-      {error && <div className="notice error">{error}</div>}
+      {error && <Notice error>{error}</Notice>}
       <BlogForm categories={categories} cities={cities} onSubmit={handleSubmit} submitLabel="Create blog" busy={busy} />
     </section>
   );

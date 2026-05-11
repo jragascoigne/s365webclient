@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Notice } from '../components/Notice.jsx';
+import { Button } from '../components/ui/button.jsx';
+import { Checkbox } from '../components/ui/checkbox.jsx';
+import { Input } from '../components/ui/input.jsx';
+import { Label } from '../components/ui/label.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export function LoginPage() {
@@ -44,14 +49,14 @@ export function LoginPage() {
       </div>
 
       <form className="entity-form" onSubmit={handleSubmit}>
-        {error && <div className="notice error">{error}</div>}
+        {error && <Notice error>{error}</Notice>}
         <div className="control-group">
-          <label htmlFor="login-email">Email</label>
-          <input id="login-email" inputMode="email" value={email} onChange={(event) => setEmail(event.target.value)} />
+          <Label htmlFor="login-email">Email</Label>
+          <Input id="login-email" inputMode="email" value={email} onChange={(event) => setEmail(event.target.value)} />
         </div>
         <div className="control-group">
-          <label htmlFor="login-password">Password</label>
-          <input
+          <Label htmlFor="login-password">Password</Label>
+          <Input
             id="login-password"
             type={showPassword ? 'text' : 'password'}
             value={password}
@@ -59,12 +64,12 @@ export function LoginPage() {
           />
         </div>
         <label className="toggle-row">
-          <input type="checkbox" checked={showPassword} onChange={() => setShowPassword((value) => !value)} />
+          <Checkbox checked={showPassword} onCheckedChange={(checked) => setShowPassword(Boolean(checked))} />
           <span>Show password</span>
         </label>
-        <button type="submit" disabled={busy}>
+        <Button type="submit" disabled={busy}>
           {busy ? 'Logging in...' : 'Log in'}
-        </button>
+        </Button>
         <p className="form-note">
           New here? <Link to="/register">Create an account</Link>
         </p>

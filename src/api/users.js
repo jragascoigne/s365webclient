@@ -27,6 +27,14 @@ export async function getUser(userId, token) {
   });
 }
 
+export async function updateUser(userId, data, token) {
+  return request(`/users/${userId}`, {
+    method: 'PATCH',
+    headers: { 'X-Authorization': token },
+    body: JSON.stringify(data),
+  });
+}
+
 export async function uploadUserImage(userId, file, token) {
   return request(`/users/${userId}/image`, {
     method: 'PUT',
@@ -35,5 +43,12 @@ export async function uploadUserImage(userId, file, token) {
       'X-Authorization': token,
     },
     body: file,
+  });
+}
+
+export async function deleteUserImage(userId, token) {
+  return request(`/users/${userId}/image`, {
+    method: 'DELETE',
+    headers: { 'X-Authorization': token },
   });
 }

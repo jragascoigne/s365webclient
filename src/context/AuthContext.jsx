@@ -83,6 +83,12 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(auth?.token),
       login,
       register,
+      refreshProfile: async () => {
+        if (!auth?.userId || !auth?.token) return null;
+        const nextProfile = await getUser(auth.userId, auth.token);
+        setProfile(nextProfile);
+        return nextProfile;
+      },
       logout,
     }),
     [auth, login, logout, profile, register],

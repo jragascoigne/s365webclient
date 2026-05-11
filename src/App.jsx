@@ -6,9 +6,12 @@ import { EditBlogPage } from './pages/EditBlogPage.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { MyBlogsPage } from './pages/MyBlogsPage.jsx';
+import { ProfilePage } from './pages/ProfilePage.jsx';
+import { EditProfilePage } from './pages/EditProfilePage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
 import { SetupPage } from './pages/SetupPage.jsx';
 import { ProtectedRoute } from './components/ProtectedRoute.jsx';
+import { Button } from './components/ui/button.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 
 const publicNavItems = [{ to: '/', label: 'Dashboard' }];
@@ -37,11 +40,12 @@ export default function App() {
               {item.label}
             </NavLink>
           ))}
+          {isAuthenticated && <NavLink to={`/users/${currentUser?.userId}`}>Profile</NavLink>}
           <NavLink to="/setup">Setup</NavLink>
           {isAuthenticated ? (
-            <button className="nav-button" type="button" onClick={handleLogout}>
+            <Button className="nav-button" variant="outline" type="button" onClick={handleLogout}>
               Log out{currentUser?.firstName ? ` ${currentUser.firstName}` : ''}
-            </button>
+            </Button>
           ) : (
             <>
               <NavLink to="/login">Log in</NavLink>
@@ -76,6 +80,15 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <MyBlogsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/users/:userId" element={<ProfilePage />} />
+          <Route
+            path="/profile/edit"
+            element={
+              <ProtectedRoute>
+                <EditProfilePage />
               </ProtectedRoute>
             }
           />

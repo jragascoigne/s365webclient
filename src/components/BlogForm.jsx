@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { validateImage } from '../utils/validation.js';
+import { Notice } from './Notice.jsx';
+import { Button } from './ui/button.jsx';
+import { Checkbox } from './ui/checkbox.jsx';
+import { Input } from './ui/input.jsx';
+import { Label } from './ui/label.jsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select.jsx';
+import { Textarea } from './ui/textarea.jsx';
 
 function toInitialCategoryIds(blog) {
   return blog?.categoryIds?.map(String) ?? [];
@@ -61,16 +68,16 @@ export function BlogForm({ blog, categories, cities, onSubmit, submitLabel, busy
 
   return (
     <form className="entity-form" onSubmit={handleSubmit}>
-      {error && <div className="notice error">{error}</div>}
+      {error && <Notice error>{error}</Notice>}
 
       <div className="control-group">
-        <label htmlFor="blog-title">Title</label>
-        <input id="blog-title" value={title} onChange={(event) => setTitle(event.target.value)} required />
+        <Label htmlFor="blog-title">Title</Label>
+        <Input id="blog-title" value={title} onChange={(event) => setTitle(event.target.value)} required />
       </div>
 
       <div className="control-group">
-        <label htmlFor="blog-description">Description</label>
-        <textarea
+        <Label htmlFor="blog-description">Description</Label>
+        <Textarea
           id="blog-description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
@@ -81,20 +88,24 @@ export function BlogForm({ blog, categories, cities, onSubmit, submitLabel, busy
 
       <div className="split-controls">
         <div className="control-group">
-          <label htmlFor="blog-city">City</label>
-          <select id="blog-city" value={cityId} onChange={(event) => setCityId(event.target.value)} required>
-            <option value="">Select a city</option>
-            {cities.map((city) => (
-              <option key={city.cityId} value={city.cityId}>
-                {city.name}
-              </option>
-            ))}
-          </select>
+          <Label htmlFor="blog-city">City</Label>
+          <Select value={cityId} onValueChange={setCityId} required>
+            <SelectTrigger id="blog-city" className="w-full">
+              <SelectValue placeholder="Select a city" />
+            </SelectTrigger>
+            <SelectContent>
+              {cities.map((city) => (
+                <SelectItem key={city.cityId} value={String(city.cityId)}>
+                  {city.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="control-group">
-          <label htmlFor="blog-series">Series</label>
-          <input
+          <Label htmlFor="blog-series">Series</Label>
+          <Input
             id="blog-series"
             value={series}
             disabled={hasExistingSeries}
@@ -107,22 +118,21 @@ export function BlogForm({ blog, categories, cities, onSubmit, submitLabel, busy
       <fieldset className="control-group">
         <legend>Categories</legend>
         <div className="checkbox-grid spacious">
-          {categoryOptions.map((category) => (
+          {categoryOptions.map((category) => {
+            const value = String(category.categoryId);
+            return (
             <label key={category.categoryId}>
-              <input
-                type="checkbox"
-                checked={categoryIds.includes(String(category.categoryId))}
-                onChange={() => toggleCategory(String(category.categoryId))}
-              />
+              <Checkbox checked={categoryIds.includes(value)} onCheckedChange={() => toggleCategory(value)} />
               <span>{category.name}</span>
             </label>
-          ))}
+          );
+          })}
         </div>
       </fieldset>
 
       <div className="control-group">
-        <label htmlFor="blog-image">Image</label>
-        <input
+        <Label htmlFor="blog-image">Image</Label>
+        <Input
           id="blog-image"
           type="file"
           accept="image/png,image/jpeg,image/gif"
@@ -130,9 +140,9 @@ export function BlogForm({ blog, categories, cities, onSubmit, submitLabel, busy
         />
       </div>
 
-      <button type="submit" disabled={busy}>
+      <Button type="submit" disabled={busy}>
         {busy ? 'Saving...' : submitLabel}
-      </button>
+      </Button>
     </form>
   );
 }
