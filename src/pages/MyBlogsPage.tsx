@@ -125,7 +125,7 @@ export function MyBlogsPage() {
                 <Link className="button-link" to={`/blogs/${blog.blogId}/edit`}>
                   Edit
                 </Link>
-                <Button type="button" variant="destructive" className="danger-button" onClick={() => setDeleteTarget(blog)}>
+                <Button type="button" variant="destructive" onClick={() => setDeleteTarget(blog)}>
                   Delete
                 </Button>
               </div>

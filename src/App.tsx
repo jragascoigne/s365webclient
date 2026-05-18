@@ -64,7 +64,6 @@ export default function App() {
 					)}
 					{isAuthenticated ? (
 						<Button
-							className="nav-button"
 							variant="outline"
 							type="button"
 							onClick={handleLogout}

@@ -150,7 +150,6 @@ function CommentBody({ comment, replyCount, canReply = false, onReply }: any) {
 				)}
 				{canReply && typeof replyCount === "number" && (
 					<Button
-						className="inline-button"
 						variant="link"
 						type="button"
 						onClick={() => onReply(comment)}
@@ -195,7 +194,6 @@ function CommentForm({ label, onSubmit, busy, onCancel }: any) {
 				</Button>
 				{onCancel && (
 					<Button
-						className="secondary-button"
 						variant="secondary"
 						type="button"
 						onClick={onCancel}
@@ -443,7 +441,7 @@ export function BlogDetailPage() {
 								<span className="detail-label">Reactions</span>
 								<div className="reaction-list">
 									{reactionOptions.map((option) => {
-										let IconComponent = option.icon;
+										const IconComponent = option.icon;
 
 										return (
 											<span
@@ -455,7 +453,7 @@ export function BlogDetailPage() {
 													gap: "8px",
 												}}
 											>
-												<IconComponent color="#8c8c8c" />{" "}
+												<IconComponent color="currentColor" />{" "}
 												{reactionCounts[option.value] ??
 													0}
 											</span>
@@ -486,12 +484,6 @@ export function BlogDetailPage() {
 										<div className="reaction-controls">
 											{reactionOptions.map((option) => (
 												<Button
-													className={
-														myReaction?.reaction ===
-														option.value
-															? "selected-button"
-															: "secondary-button"
-													}
 													variant={
 														myReaction?.reaction ===
 														option.value
@@ -513,7 +505,7 @@ export function BlogDetailPage() {
 										</div>
 										{myReaction && (
 											<Button
-												className="danger-button fit-link"
+												className="fit-link"
 												variant="destructive"
 												disabled={actionBusy}
 												type="button"

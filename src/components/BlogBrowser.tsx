@@ -212,7 +212,7 @@ export function BlogBrowser() {
           </div>
         </div>
 
-        <Button className="secondary-button" variant="secondary" type="button" onClick={clearFilters}>
+        <Button variant="secondary" type="button" onClick={clearFilters}>
           Reset
         </Button>
       </form>
