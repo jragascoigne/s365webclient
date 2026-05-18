@@ -1,4 +1,4 @@
-import { NavLink, Route, Routes } from "react-router-dom";
+import { Link, NavLink, Route, Routes } from "react-router-dom";
 import { apiBaseUrl } from "./config";
 import { BlogDetailPage } from "./pages/BlogDetailPage";
 import { CreateBlogPage } from "./pages/CreateBlogPage";
@@ -31,9 +31,19 @@ export default function App() {
 	return (
 		<div className="app-shell">
 			<header className="top-bar">
-				<div className="nav-title">
-					<Tent /> Attention
-				</div>
+				<Link
+					to="/"
+					className="nav-title"
+					style={{
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "center",
+						alignItems: "center",
+						gap: "8px",
+					}}
+				>
+					<Tent /> Atent
+				</Link>
 				<nav aria-label="Primary navigation">
 					{[
 						...publicNavItems,

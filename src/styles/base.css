@@ -169,9 +169,9 @@ select {
 }
 
 .top-bar a.active {
-	border-color: #9bb7ad;
+	border-color: #5d52be;
 	color: var(--accent-strong);
-	background: #eef6f3;
+	background: #f2eef6;
 }
 
 .eyebrow {
@@ -344,9 +344,9 @@ button:disabled {
 }
 
 .selected-button {
-	border-color: #274d3e;
+	border-color: #5d52be;
 	color: #fff;
-	background: #274d3e;
+	background: #5d52be;
 }
 
 .checkbox-grid {
@@ -409,7 +409,7 @@ button:disabled {
 	padding: 14px;
 	border: 1px solid #d3d9ce;
 	border-radius: 6px;
-	color: #516052;
+	color: #5d52be;
 	background: #f4f7f1;
 }
 
@@ -803,7 +803,7 @@ button:disabled {
 	min-height: 28px;
 	padding: 0 9px;
 	border-radius: 999px;
-	color: #244235;
+	color: #5d52be;
 	background: #dfeee7;
 	font-size: 0.8rem;
 	font-weight: 700;
@@ -918,7 +918,7 @@ button:disabled {
 	--chart-5: oklch(0.269 0 0);
 	--sidebar: oklch(0.205 0 0);
 	--sidebar-foreground: oklch(0.985 0 0);
-	--sidebar-primary: oklch(0.488 0.243 264.376);
+	--sidebar-primary: 5d52be (0.488 0.243 264.376);
 	--sidebar-primary-foreground: oklch(0.985 0 0);
 	--sidebar-accent: oklch(0.269 0 0);
 	--sidebar-accent-foreground: oklch(0.985 0 0);
