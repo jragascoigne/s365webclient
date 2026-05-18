@@ -12,6 +12,8 @@ import { RegisterPage } from "./pages/RegisterPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Button } from "./components/ui/button";
 import { useAuth } from "./stores/auth";
+import "./styles/base.css";
+import { Tent } from "lucide-react";
 
 const publicNavItems = [{ to: "/", label: "Dashboard" }];
 const privateNavItems = [
@@ -29,8 +31,8 @@ export default function App() {
 	return (
 		<div className="app-shell">
 			<header className="top-bar">
-				<div>
-					<h1>Travel Blog Client</h1>
+				<div className="nav-title">
+					<Tent /> Attention
 				</div>
 				<nav aria-label="Primary navigation">
 					{[
