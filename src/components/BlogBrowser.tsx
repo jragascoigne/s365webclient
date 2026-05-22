@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getBlogs, getCategories, getCities, sortOptions } from "../api/blogs";
 import { BlogSummaryCard } from "./BlogSummaryCard";
 import { Notice } from "./Notice";
@@ -13,7 +13,8 @@ import {
 	SelectValue,
 } from "./ui/select";
 
-const pageSizeOptions = [5, 10];
+const pageSizeOptions = [6, 12];
+const pageNumberGroupSize = 6;
 
 function toLookup(items, key = "categoryId") {
 	return Object.fromEntries(items.map((item) => [item[key], item.name]));
@@ -35,10 +36,12 @@ export function BlogBrowser() {
 	const [selectedCategories, setSelectedCategories] = useState([]);
 	const [selectedCities, setSelectedCities] = useState([]);
 	const [minimumReactions, setMinimumReactions] = useState("");
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(6);
 	const [page, setPage] = useState(1);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
+	const resultsPanelRef = useRef<HTMLDivElement | null>(null);
+	const shouldScrollAfterPageChange = useRef(false);
 
 	useEffect(() => {
 		let active = true;
@@ -100,6 +103,38 @@ export function BlogBrowser() {
 	const safePage = Math.min(page, pageCount);
 	const pageStart = (safePage - 1) * pageSize;
 	const visibleBlogs = filteredBlogs.slice(pageStart, pageStart + pageSize);
+	const pageGroupStart =
+		Math.floor((safePage - 1) / pageNumberGroupSize) *
+			pageNumberGroupSize +
+		1;
+	const pageGroupEnd = Math.min(
+		pageGroupStart + pageNumberGroupSize - 1,
+		pageCount,
+	);
+	const visiblePageNumbers = Array.from(
+		{ length: pageGroupEnd - pageGroupStart + 1 },
+		(_, index) => pageGroupStart + index,
+	);
+
+	useEffect(() => {
+		if (!shouldScrollAfterPageChange.current) return;
+
+		shouldScrollAfterPageChange.current = false;
+		window.requestAnimationFrame(() => {
+			resultsPanelRef.current?.scrollIntoView({
+				block: "start",
+				behavior: "auto",
+			});
+		});
+	}, [safePage]);
+
+	function changePage(nextPage) {
+		shouldScrollAfterPageChange.current = true;
+		if (document.activeElement instanceof HTMLElement) {
+			document.activeElement.blur();
+		}
+		setPage(nextPage);
+	}
 
 	function handleSubmit(event) {
 		event.preventDefault();
@@ -251,7 +286,7 @@ export function BlogBrowser() {
 				</Button>
 			</form>
 
-			<div className="results-panel">
+			<div className="results-panel" ref={resultsPanelRef}>
 				<div className="results-toolbar">
 					<div>
 						<h2>{filteredBlogs.length} matching posts</h2>
@@ -283,33 +318,31 @@ export function BlogBrowser() {
 						type="button"
 						variant="outline"
 						disabled={safePage === 1}
-						onClick={() => setPage(1)}
-					>
-						First
-					</Button>
-					<Button
-						type="button"
-						variant="outline"
-						disabled={safePage === 1}
-						onClick={() => setPage((current) => current - 1)}
+						onClick={() => changePage(safePage - 1)}
 					>
 						Previous
 					</Button>
+					{visiblePageNumbers.map((pageNumber) => (
+						<Button
+							key={pageNumber}
+							type="button"
+							variant={pageNumber === safePage ? "default" : "outline"}
+							size="icon-sm"
+							aria-current={
+								pageNumber === safePage ? "page" : undefined
+							}
+							onClick={() => changePage(pageNumber)}
+						>
+							{pageNumber}
+						</Button>
+					))}
 					<Button
 						type="button"
 						variant="outline"
 						disabled={safePage === pageCount}
-						onClick={() => setPage((current) => current + 1)}
+						onClick={() => changePage(safePage + 1)}
 					>
 						Next
-					</Button>
-					<Button
-						type="button"
-						variant="outline"
-						disabled={safePage === pageCount}
-						onClick={() => setPage(pageCount)}
-					>
-						Last
 					</Button>
 				</div>
 			</div>

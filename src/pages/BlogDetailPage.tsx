@@ -130,6 +130,7 @@ function CommentList({ comments, canComment, onReply }) {
 								{replies.map((reply) => (
 									<CommentBody
 										comment={reply}
+										isSubComment
 										key={reply.commentId}
 									/>
 								))}
@@ -142,11 +143,19 @@ function CommentList({ comments, canComment, onReply }) {
 	);
 }
 
-function CommentBody({ comment, replyCount, canReply = false, onReply }: any) {
+function CommentBody({
+	comment,
+	replyCount,
+	canReply = false,
+	onReply,
+	isSubComment = false,
+}: any) {
 	const commenterName = `${comment.commenterFirstName} ${comment.commenterLastName}`;
 
 	return (
-		<div className="comment-body">
+		<div
+			className={`comment-body ${isSubComment ? "comment-body-sub" : ""}`}
+		>
 			<div className="avatar-frame">
 				<RemoteImage
 					src={`${apiBaseUrl}/users/${comment.commenterId}/image`}
@@ -159,18 +168,22 @@ function CommentBody({ comment, replyCount, canReply = false, onReply }: any) {
 					<span>{formatNzDate(comment.timestamp)}</span>
 				</div>
 				<p>{comment.comment}</p>
-				{typeof replyCount === "number" && (
-					<span className="reply-count">{replyCount} replies</span>
-				)}
-				{canReply && typeof replyCount === "number" && (
-					<Button
-						variant="link"
-						type="button"
-						onClick={() => onReply(comment)}
-					>
-						Reply
-					</Button>
-				)}
+				<div className="comment-content">
+					{canReply && typeof replyCount === "number" && (
+						<Button
+							variant="link"
+							type="button"
+							onClick={() => onReply(comment)}
+						>
+							Reply
+						</Button>
+					)}
+					{typeof replyCount === "number" && (
+						<span className="reply-count">
+							{replyCount} replies
+						</span>
+					)}
+				</div>
 			</div>
 		</div>
 	);
@@ -502,9 +515,7 @@ export function BlogDetailPage() {
 													handleReaction(option.value)
 												}
 											>
-												<IconComponent
-													aria-hidden="true"
-												/>
+												<IconComponent aria-hidden="true" />
 												<span>{count}</span>
 											</button>
 										);

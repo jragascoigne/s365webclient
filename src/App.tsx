@@ -1,4 +1,5 @@
-import { Link, NavLink, Route, Routes } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import { apiBaseUrl } from "./config";
 import { BlogDetailPage } from "./pages/BlogDetailPage";
 import { CreateBlogPage } from "./pages/CreateBlogPage";
@@ -21,6 +22,90 @@ const privateNavItems = [
 	{ to: "/my-blogs", label: "My Blogs" },
 ];
 
+function ProfileMenu({ currentUser, onLogout }: any) {
+	const [imageFailed, setImageFailed] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement | null>(null);
+	const location = useLocation();
+	const userId = currentUser?.userId;
+	const initials = `${currentUser?.firstName?.[0] ?? ""}${
+		currentUser?.lastName?.[0] ?? ""
+	}`.trim();
+
+	useEffect(() => {
+		setImageFailed(false);
+	}, [userId]);
+
+	useEffect(() => {
+		setIsOpen(false);
+	}, [location.pathname]);
+
+	useEffect(() => {
+		if (!isOpen) return;
+
+		function handlePointerDown(event: PointerEvent) {
+			if (!menuRef.current?.contains(event.target as Node)) {
+				setIsOpen(false);
+			}
+		}
+
+		function handleKeyDown(event: KeyboardEvent) {
+			if (event.key === "Escape") {
+				setIsOpen(false);
+			}
+		}
+
+		document.addEventListener("pointerdown", handlePointerDown);
+		document.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			document.removeEventListener("pointerdown", handlePointerDown);
+			document.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [isOpen]);
+
+	async function handleLogoutClick() {
+		setIsOpen(false);
+		await onLogout();
+	}
+
+	return (
+		<div className="profile-menu" ref={menuRef}>
+			<button
+				className="profile-menu-trigger"
+				type="button"
+				aria-label="Account menu"
+				aria-expanded={isOpen}
+				onClick={() => setIsOpen((current) => !current)}
+			>
+				<span className="header-avatar">
+					{userId && !imageFailed ? (
+						<img
+							src={`${apiBaseUrl}/users/${userId}/image`}
+							alt=""
+							onError={() => setImageFailed(true)}
+						/>
+					) : (
+						<span>{initials || "A"}</span>
+					)}
+				</span>
+			</button>
+			{isOpen && (
+				<div className="profile-menu-panel">
+					<NavLink to={`/users/${userId}`}>View profile</NavLink>
+					<Button
+						variant="destructive"
+						type="button"
+						onClick={handleLogoutClick}
+					>
+						Log out
+					</Button>
+				</div>
+			)}
+		</div>
+	);
+}
+
 export default function App() {
 	const { currentUser, isAuthenticated, logout } = useAuth();
 
@@ -34,13 +119,6 @@ export default function App() {
 				<Link
 					to="/"
 					className="nav-title"
-					style={{
-						display: "flex",
-						flexDirection: "row",
-						justifyContent: "center",
-						alignItems: "center",
-						gap: "8px",
-					}}
 				>
 					<Tent /> Atent
 				</Link>
@@ -57,22 +135,11 @@ export default function App() {
 							{item.label}
 						</NavLink>
 					))}
-					{isAuthenticated && (
-						<NavLink to={`/users/${currentUser?.userId}`}>
-							Profile
-						</NavLink>
-					)}
 					{isAuthenticated ? (
-						<Button
-							variant="outline"
-							type="button"
-							onClick={handleLogout}
-						>
-							Log out
-							{currentUser?.firstName
-								? ` ${currentUser.firstName}`
-								: ""}
-						</Button>
+						<ProfileMenu
+							currentUser={currentUser}
+							onLogout={handleLogout}
+						/>
 					) : (
 						<>
 							<NavLink to="/login">Log in</NavLink>

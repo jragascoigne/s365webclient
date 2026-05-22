@@ -162,6 +162,7 @@ select {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
+	align-items: center;
 }
 
 .top-bar a {
@@ -179,6 +180,77 @@ select {
 	border-color: var(--purple);
 	color: var(--accent-strong);
 	background: var(--accent);
+}
+
+.profile-menu {
+	position: relative;
+}
+
+.profile-menu-trigger {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	border: 1px solid var(--line);
+	border-radius: 50%;
+	padding: 0;
+	background: var(--white);
+	cursor: pointer;
+}
+
+.profile-menu-trigger[aria-expanded="true"] {
+	border-color: var(--purple);
+	box-shadow: 0 0 0 3px var(--accent);
+}
+
+.header-avatar {
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	overflow: hidden;
+	border-radius: 50%;
+	color: var(--accent-strong);
+	background: var(--accent);
+	font-size: 0.9rem;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.header-avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.profile-menu-panel {
+	position: absolute;
+	right: 0;
+	top: calc(100% + 8px);
+	z-index: 30;
+	display: grid;
+	gap: 8px;
+	min-width: 170px;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	padding: 8px;
+	background: var(--white);
+	box-shadow: 0 14px 40px rgba(35, 24, 45, 0.14);
+}
+
+.top-bar .profile-menu-panel a {
+	justify-content: flex-start;
+	width: 100%;
+	min-height: 38px;
+	padding: 0 10px;
+}
+
+.profile-menu-panel button {
+	justify-content: flex-start;
+	width: 100%;
+	min-height: 38px;
 }
 
 .page-section {
@@ -216,6 +288,17 @@ select {
 	border: 1px solid var(--line);
 	border-radius: 8px;
 	background: var(--white);
+}
+
+.comment-body-sub {
+	padding-right: 0 !important;
+}
+
+.comment-content {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .filter-panel {
@@ -461,6 +544,7 @@ button[data-variant="link"]:hover,
 
 .results-panel {
 	padding: 18px;
+	scroll-margin-top: 86px;
 }
 
 .results-toolbar {
@@ -1009,7 +1093,13 @@ button[data-variant="link"]:hover,
 	}
 }
 
-.nav-title {
+.top-bar .nav-title {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 0;
+	padding: 0;
+	border: 0;
 	font-size: 32px;
 	color: var(--black) !important;
 }
