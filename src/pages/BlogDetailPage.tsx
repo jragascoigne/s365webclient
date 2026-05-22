@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { apiBaseUrl } from "../config";
 import {
 	addBlogComment,
 	addBlogReaction,
+	deleteBlog,
 	getBlog,
 	getBlogComments,
 	getBlogReactions,
@@ -16,6 +17,15 @@ import { BlogSummaryCard } from "../components/BlogSummaryCard";
 import { Notice } from "../components/Notice";
 import { RemoteImage } from "../components/RemoteImage";
 import { Button } from "../components/ui/button";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "../components/ui/dialog";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { useAuth } from "../stores/auth";
@@ -43,6 +53,10 @@ function getReactionCounts(reactions) {
 		counts[item.reaction] = (counts[item.reaction] ?? 0) + 1;
 		return counts;
 	}, {});
+}
+
+function formatReactionCount(count) {
+	return `${count} ${count === 1 ? "reaction" : "reactions"}`;
 }
 
 const reactionOptions = [
@@ -208,6 +222,7 @@ function CommentForm({ label, onSubmit, busy, onCancel }: any) {
 
 export function BlogDetailPage() {
 	const { blogId } = useParams();
+	const navigate = useNavigate();
 	const { auth, isAuthenticated } = useAuth();
 	const [blog, setBlog] = useState(null);
 	const [comments, setComments] = useState([]);
@@ -219,6 +234,7 @@ export function BlogDetailPage() {
 	const [error, setError] = useState("");
 	const [actionError, setActionError] = useState("");
 	const [actionBusy, setActionBusy] = useState(false);
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 	const [replyTarget, setReplyTarget] = useState(null);
 
 	const loadDetails = useCallback(
@@ -310,23 +326,14 @@ export function BlogDetailPage() {
 		setActionError("");
 		setActionBusy(true);
 		try {
-			await addBlogReaction(blogId, reaction, auth.token);
+			if (myReaction?.reaction === reaction) {
+				await removeBlogReaction(blogId, auth.token);
+			} else {
+				await addBlogReaction(blogId, reaction, auth.token);
+			}
 			await refreshInteractions();
 		} catch (err) {
 			setActionError(err.message || "Could not update reaction.");
-		} finally {
-			setActionBusy(false);
-		}
-	}
-
-	async function handleRemoveReaction() {
-		setActionError("");
-		setActionBusy(true);
-		try {
-			await removeBlogReaction(blogId, auth.token);
-			await refreshInteractions();
-		} catch (err) {
-			setActionError(err.message || "Could not remove reaction.");
 		} finally {
 			setActionBusy(false);
 		}
@@ -345,6 +352,23 @@ export function BlogDetailPage() {
 			await refreshInteractions();
 		} catch (err) {
 			setActionError(err.message || "Could not post comment.");
+		} finally {
+			setActionBusy(false);
+		}
+	}
+
+	async function handleDeleteBlog() {
+		setActionError("");
+		setActionBusy(true);
+		try {
+			await deleteBlog(blogId, auth.token);
+			setDeleteDialogOpen(false);
+			navigate("/my-blogs", { replace: true });
+		} catch (err) {
+			setActionError(
+				err.message ||
+					"Could not delete blog. Blogs with comments cannot be deleted.",
+			);
 		} finally {
 			setActionBusy(false);
 		}
@@ -375,12 +399,23 @@ export function BlogDetailPage() {
 							</p>
 							<h2>{blog.title}</h2>
 							{auth?.userId === blog.creatorId && (
-								<Link
-									className="button-link fit-link"
-									to={`/blogs/${blog.blogId}/edit`}
-								>
-									Edit blog
-								</Link>
+								<div className="action-row">
+									<Link
+										className="button-link"
+										to={`/blogs/${blog.blogId}/edit`}
+									>
+										Edit blog
+									</Link>
+									<Button
+										type="button"
+										variant="destructive"
+										onClick={() =>
+											setDeleteDialogOpen(true)
+										}
+									>
+										Delete blog
+									</Button>
+								</div>
 							)}
 							<p className="blog-description">
 								{blog.description}
@@ -442,81 +477,58 @@ export function BlogDetailPage() {
 								<div className="reaction-list">
 									{reactionOptions.map((option) => {
 										const IconComponent = option.icon;
+										const count =
+											reactionCounts[option.value] ?? 0;
+										const isSelected =
+											myReaction?.reaction ===
+											option.value;
+										const canReact =
+											isAuthenticated && !isCreator;
 
 										return (
-											<span
+											<button
 												key={option.value}
-												style={{
-													display: "flex",
-													flexDirection: "row",
-													alignItems: "center",
-													gap: "8px",
-												}}
+												type="button"
+												className="reaction-option"
+												data-selected={
+													isSelected || undefined
+												}
+												disabled={
+													actionBusy || !canReact
+												}
+												aria-pressed={isSelected}
+												aria-label={`${option.label}: ${formatReactionCount(count)}`}
+												onClick={() =>
+													handleReaction(option.value)
+												}
 											>
-												<IconComponent color="currentColor" />{" "}
-												{reactionCounts[option.value] ??
-													0}
-											</span>
+												<IconComponent
+													aria-hidden="true"
+												/>
+												<span>{count}</span>
+											</button>
 										);
 									})}
 								</div>
 							</div>
 
-							<div className="interaction-panel">
-								<span className="detail-label">
-									Your reaction
-								</span>
-								{!isAuthenticated && (
-									<p className="form-note">
-										<Link to="/login">Log in</Link> or{" "}
-										<Link to="/register">register</Link> to
-										react.
-									</p>
-								)}
-								{isAuthenticated && isCreator && (
-									<Notice>
-										Creators cannot react to their own
-										blogs.
-									</Notice>
-								)}
-								{isAuthenticated && !isCreator && (
-									<>
-										<div className="reaction-controls">
-											{reactionOptions.map((option) => (
-												<Button
-													variant={
-														myReaction?.reaction ===
-														option.value
-															? "default"
-															: "secondary"
-													}
-													disabled={actionBusy}
-													key={option.value}
-													type="button"
-													onClick={() =>
-														handleReaction(
-															option.value,
-														)
-													}
-												>
-													{option.label}
-												</Button>
-											))}
-										</div>
-										{myReaction && (
-											<Button
-												className="fit-link"
-												variant="destructive"
-												disabled={actionBusy}
-												type="button"
-												onClick={handleRemoveReaction}
-											>
-												Remove reaction
-											</Button>
-										)}
-									</>
-								)}
-							</div>
+							{(!isAuthenticated || isCreator) && (
+								<div className="interaction-panel">
+									{!isAuthenticated && (
+										<p className="form-note">
+											<Link to="/login">Log in</Link> or{" "}
+											<Link to="/register">register</Link>{" "}
+											to react.
+										</p>
+									)}
+									{isAuthenticated && isCreator && (
+										<Notice>
+											Creators cannot react to their own
+											blogs.
+										</Notice>
+									)}
+								</div>
+							)}
 						</div>
 					</article>
 
@@ -524,7 +536,6 @@ export function BlogDetailPage() {
 
 					<section className="detail-panel">
 						<div className="section-header compact">
-							<p className="eyebrow">Comments</p>
 							<h2>{comments.length} comments</h2>
 						</div>
 						{!isAuthenticated ? (
@@ -560,7 +571,6 @@ export function BlogDetailPage() {
 
 					<section className="detail-panel">
 						<div className="section-header compact">
-							<p className="eyebrow">Similar Blogs</p>
 							<h2>{similarBlogs.length} related posts</h2>
 						</div>
 						{similarBlogs.length === 0 ? (
@@ -578,6 +588,35 @@ export function BlogDetailPage() {
 							</div>
 						)}
 					</section>
+
+					<Dialog
+						open={deleteDialogOpen}
+						onOpenChange={setDeleteDialogOpen}
+					>
+						<DialogContent>
+							<DialogHeader>
+								<DialogTitle>Delete blog?</DialogTitle>
+								<DialogDescription>
+									{`This will permanently delete "${blog.title}". Blogs with comments cannot be deleted.`}
+								</DialogDescription>
+							</DialogHeader>
+							<DialogFooter>
+								<DialogClose asChild>
+									<Button type="button" variant="outline">
+										Cancel
+									</Button>
+								</DialogClose>
+								<Button
+									type="button"
+									variant="destructive"
+									disabled={actionBusy}
+									onClick={handleDeleteBlog}
+								>
+									Delete
+								</Button>
+							</DialogFooter>
+						</DialogContent>
+					</Dialog>
 				</div>
 			)}
 		</section>

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { getUser, loginUser, logoutUser, registerUser, uploadUserImage } from '../api/users';
+import { ApiError } from '../api/client';
 
 const storageKey = 's365-auth';
 
@@ -93,23 +94,36 @@ export const useAuth = create<AuthState>((set, get) => ({
       return null;
     }
 
-    const nextProfile = await getUser(auth.userId, auth.token);
-    set({ profile: nextProfile, ...toDerivedState(auth, nextProfile) });
-    return nextProfile;
+    try {
+      const nextProfile = await getUser(auth.userId, auth.token);
+      set({ profile: nextProfile, ...toDerivedState(auth, nextProfile) });
+      return nextProfile;
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        writeStoredAuth(null);
+        set({ auth: null, profile: null, ...toDerivedState(null, null) });
+        return null;
+      }
+      throw err;
+    }
   },
 
   logout: async () => {
     const { auth } = get();
-    if (auth?.token) {
-      await logoutUser(auth.token);
+    try {
+      if (auth?.token) {
+        await logoutUser(auth.token);
+      }
+    } finally {
+      writeStoredAuth(null);
+      set({ auth: null, profile: null, ...toDerivedState(null, null) });
     }
-    writeStoredAuth(null);
-    set({ auth: null, profile: null, ...toDerivedState(null, null) });
   },
 }));
 
 if (storedAuth?.token) {
   void useAuth.getState().refreshProfile().catch(() => {
-    useAuth.setState({ profile: null, ...toDerivedState(storedAuth, null) });
+    writeStoredAuth(null);
+    useAuth.setState({ auth: null, profile: null, ...toDerivedState(null, null) });
   });
 }

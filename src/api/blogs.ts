@@ -5,8 +5,8 @@ export const sortOptions = [
   { value: 'CREATED_ASC', label: 'Oldest first' },
   { value: 'ALPHABETICAL_ASC', label: 'Title A-Z' },
   { value: 'ALPHABETICAL_DESC', label: 'Title Z-A' },
-  { value: 'REACTS_ASC', label: 'Fewest reactions' },
-  { value: 'REACTS_DESC', label: 'Most reactions' },
+  { value: 'REACTIONS_ASC', label: 'Fewest reactions' },
+  { value: 'REACTIONS_DESC', label: 'Most reactions' },
 ];
 
 export async function getBlogs({ q = '', sortBy = 'CREATED_DESC', creatorId }: any = {}) {

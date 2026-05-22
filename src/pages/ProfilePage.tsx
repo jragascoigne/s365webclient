@@ -84,7 +84,7 @@ export function ProfilePage() {
   const groupedBlogs = useMemo(() => groupBlogsBySeries(blogs), [blogs]);
 
   return (
-    <section className="page-section">
+    <section className="page-section narrow-section">
       {loading && <Notice>Loading profile...</Notice>}
       {error && <Notice error>{error}</Notice>}
 
@@ -95,7 +95,6 @@ export function ProfilePage() {
               <RemoteImage src={`${apiBaseUrl}/users/${userId}/image`} alt="" />
             </div>
             <div>
-              <p className="eyebrow">{isOwnProfile ? 'My Profile' : 'Profile'}</p>
               <h2>
                 {user.firstName} {user.lastName}
               </h2>
@@ -110,7 +109,6 @@ export function ProfilePage() {
 
           <section className="detail-panel">
             <div className="section-header compact">
-              <p className="eyebrow">Series</p>
               <h2>{blogs.length} blogs by series</h2>
             </div>
 

@@ -4,7 +4,7 @@ import { Notice } from '../components/Notice';
 import { Button } from '../components/ui/button';
 import { Checkbox } from '../components/ui/checkbox';
 import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
+import { RequiredLabel } from '../components/RequiredLabel';
 import { useAuth } from '../stores/auth';
 
 export function LoginPage() {
@@ -25,8 +25,12 @@ export function LoginPage() {
     event.preventDefault();
     setError('');
 
-    if (!email.trim() || !password) {
-      setError('Email and password are required.');
+    if (!email.trim()) {
+      setError('Email is required.');
+      return;
+    }
+    if (!password) {
+      setError('Password is required.');
       return;
     }
 
@@ -44,18 +48,17 @@ export function LoginPage() {
   return (
     <section className="page-section narrow-section">
       <div className="section-header">
-        <p className="eyebrow">Account</p>
         <h2>Log in</h2>
       </div>
 
       <form className="entity-form" onSubmit={handleSubmit}>
         {error && <Notice error>{error}</Notice>}
         <div className="control-group">
-          <Label htmlFor="login-email">Email</Label>
+          <RequiredLabel htmlFor="login-email">Email</RequiredLabel>
           <Input id="login-email" inputMode="email" value={email} onChange={(event) => setEmail(event.target.value)} />
         </div>
         <div className="control-group">
-          <Label htmlFor="login-password">Password</Label>
+          <RequiredLabel htmlFor="login-password">Password</RequiredLabel>
           <Input
             id="login-password"
             type={showPassword ? 'text' : 'password'}

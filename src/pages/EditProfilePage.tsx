@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button';
 import { Checkbox } from '../components/ui/checkbox';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { RequiredLabel } from '../components/RequiredLabel';
 import { deleteUserImage, updateUser, uploadUserImage } from '../api/users';
 import { useAuth } from '../stores/auth';
 import { validateImage } from '../utils/validation';
@@ -46,8 +47,12 @@ export function EditProfilePage() {
     event.preventDefault();
     setError('');
 
-    if (!form.firstName.trim() || !form.lastName.trim()) {
-      setError('First and last name are required.');
+    if (!form.firstName.trim()) {
+      setError('First name is required.');
+      return;
+    }
+    if (!form.lastName.trim()) {
+      setError('Last name is required.');
       return;
     }
     if (!isValidEmail(form.email)) {
@@ -98,7 +103,6 @@ export function EditProfilePage() {
       </Link>
 
       <div className="section-header">
-        <p className="eyebrow">Profile</p>
         <h2>Edit profile</h2>
       </div>
 
@@ -107,7 +111,7 @@ export function EditProfilePage() {
 
         <div className="split-controls">
           <div className="control-group">
-            <Label htmlFor="profile-first-name">First name</Label>
+            <RequiredLabel htmlFor="profile-first-name">First name</RequiredLabel>
             <Input
               id="profile-first-name"
               value={form.firstName}
@@ -115,7 +119,7 @@ export function EditProfilePage() {
             />
           </div>
           <div className="control-group">
-            <Label htmlFor="profile-last-name">Last name</Label>
+            <RequiredLabel htmlFor="profile-last-name">Last name</RequiredLabel>
             <Input
               id="profile-last-name"
               value={form.lastName}
@@ -125,7 +129,7 @@ export function EditProfilePage() {
         </div>
 
         <div className="control-group">
-          <Label htmlFor="profile-email">Email</Label>
+          <RequiredLabel htmlFor="profile-email">Email</RequiredLabel>
           <Input
             id="profile-email"
             inputMode="email"
@@ -162,12 +166,19 @@ export function EditProfilePage() {
 
         <div className="control-group">
           <Label htmlFor="profile-picture">Profile picture</Label>
-          <Input
-            id="profile-picture"
-            type="file"
-            accept="image/png,image/jpeg,image/gif"
-            onChange={(event) => setProfileImage(event.target.files?.[0] ?? null)}
-          />
+          <div className="file-picker">
+            <Input
+              id="profile-picture"
+              className="file-picker-input"
+              type="file"
+              accept="image/png,image/jpeg,image/gif"
+              onChange={(event) => setProfileImage(event.target.files?.[0] ?? null)}
+            />
+            <label className="file-picker-button" htmlFor="profile-picture">
+              Select image
+            </label>
+            <span className="file-picker-name">{profileImage?.name ?? 'No image selected'}</span>
+          </div>
         </div>
 
         <label className="toggle-row">

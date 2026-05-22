@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button';
 import { Checkbox } from '../components/ui/checkbox';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { RequiredLabel } from '../components/RequiredLabel';
 import { useAuth } from '../stores/auth';
 import { validateImage } from '../utils/validation';
 
@@ -33,8 +34,12 @@ export function RegisterPage() {
     event.preventDefault();
     setError('');
 
-    if (!form.firstName.trim() || !form.lastName.trim()) {
-      setError('First and last name are required.');
+    if (!form.firstName.trim()) {
+      setError('First name is required.');
+      return;
+    }
+    if (!form.lastName.trim()) {
+      setError('Last name is required.');
       return;
     }
     if (!isValidEmail(form.email)) {
@@ -75,7 +80,6 @@ export function RegisterPage() {
   return (
     <section className="page-section narrow-section">
       <div className="section-header">
-        <p className="eyebrow">Account</p>
         <h2>Create account</h2>
       </div>
 
@@ -83,16 +87,16 @@ export function RegisterPage() {
         {error && <Notice error>{error}</Notice>}
         <div className="split-controls">
           <div className="control-group">
-            <Label htmlFor="first-name">First name</Label>
+            <RequiredLabel htmlFor="first-name">First name</RequiredLabel>
             <Input id="first-name" value={form.firstName} onChange={(event) => updateField('firstName', event.target.value)} />
           </div>
           <div className="control-group">
-            <Label htmlFor="last-name">Last name</Label>
+            <RequiredLabel htmlFor="last-name">Last name</RequiredLabel>
             <Input id="last-name" value={form.lastName} onChange={(event) => updateField('lastName', event.target.value)} />
           </div>
         </div>
         <div className="control-group">
-          <Label htmlFor="register-email">Email</Label>
+          <RequiredLabel htmlFor="register-email">Email</RequiredLabel>
           <Input
             id="register-email"
             inputMode="email"
@@ -101,7 +105,7 @@ export function RegisterPage() {
           />
         </div>
         <div className="control-group">
-          <Label htmlFor="register-password">Password</Label>
+          <RequiredLabel htmlFor="register-password">Password</RequiredLabel>
           <Input
             id="register-password"
             type={showPassword ? 'text' : 'password'}
@@ -115,12 +119,19 @@ export function RegisterPage() {
         </label>
         <div className="control-group">
           <Label htmlFor="profile-image">Profile image</Label>
-          <Input
-            id="profile-image"
-            type="file"
-            accept="image/png,image/jpeg,image/gif"
-            onChange={(event) => setProfileImage(event.target.files?.[0] ?? null)}
-          />
+          <div className="file-picker">
+            <Input
+              id="profile-image"
+              className="file-picker-input"
+              type="file"
+              accept="image/png,image/jpeg,image/gif"
+              onChange={(event) => setProfileImage(event.target.files?.[0] ?? null)}
+            />
+            <label className="file-picker-button" htmlFor="profile-image">
+              Select image
+            </label>
+            <span className="file-picker-name">{profileImage?.name ?? 'No image selected'}</span>
+          </div>
         </div>
         <Button type="submit" disabled={busy}>
           {busy ? 'Creating...' : 'Register'}

@@ -9,12 +9,14 @@ import { Card, CardContent } from './ui/card';
 export function BlogSummaryCard({ blog, categoryLookup, cityLookup }) {
   const categories = blog.categoryIds?.map((id) => categoryLookup[id] ?? `Category ${id}`) ?? [];
   const creatorName = `${blog.creatorFirstName} ${blog.creatorLastName}`;
+  const reactionCount = Number(blog.numReactions ?? 0);
+  const reactionLabel = `${reactionCount} ${reactionCount === 1 ? 'reaction' : 'reactions'}`;
 
   return (
     <Card className="blog-card overflow-hidden">
-      <div className="blog-image-frame">
+      <Link className="blog-image-frame" to={`/blogs/${blog.blogId}`} aria-label={`Read ${blog.title}`}>
         <RemoteImage src={`${apiBaseUrl}/blogs/${blog.blogId}/image`} alt="" />
-      </div>
+      </Link>
 
       <CardContent className="blog-card-body p-4">
         <div>
@@ -35,7 +37,7 @@ export function BlogSummaryCard({ blog, categoryLookup, cityLookup }) {
 
         <div className="blog-detail-row">
           <span>{cityLookup[blog.cityId] ?? `City ${blog.cityId}`}</span>
-          <span>{blog.numReactions} reactions</span>
+          <span>{reactionLabel}</span>
         </div>
 
         <div className="tag-list" aria-label={`Categories for ${blog.title}`}>

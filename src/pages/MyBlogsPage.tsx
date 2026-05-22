@@ -101,37 +101,38 @@ export function MyBlogsPage() {
   }
 
   return (
-    <section className="page-section">
+    <section className="page-section narrow-section">
       <div className="section-header">
-        <p className="eyebrow">Managing Blogs</p>
         <h2>My blogs</h2>
       </div>
 
-      {error && <Notice error>{error}</Notice>}
-      {loading && <Notice>Loading your blogs...</Notice>}
-      {!loading && items.length === 0 && <Notice>No created, reacted, or commented blogs yet.</Notice>}
+      <div className="managed-panel">
+        {error && <Notice error>{error}</Notice>}
+        {loading && <Notice>Loading your blogs...</Notice>}
+        {!loading && items.length === 0 && <Notice>No created, reacted, or commented blogs yet.</Notice>}
 
-      <div className="managed-list">
-        {items.map(({ blog, roles }) => (
-          <div className="managed-card" key={blog.blogId}>
-            <div className="involvement-row">
-              {[...roles].map((role) => (
-                <span key={role}>{role}</span>
-              ))}
-            </div>
-            <BlogSummaryCard blog={blog} categoryLookup={categoryLookup} cityLookup={cityLookup} />
-            {blog.creatorId === auth.userId && (
-              <div className="action-row">
-                <Link className="button-link" to={`/blogs/${blog.blogId}/edit`}>
-                  Edit
-                </Link>
-                <Button type="button" variant="destructive" onClick={() => setDeleteTarget(blog)}>
-                  Delete
-                </Button>
+        <div className="managed-list">
+          {items.map(({ blog, roles }) => (
+            <div className="managed-card" key={blog.blogId}>
+              <div className="involvement-row">
+                {[...roles].map((role) => (
+                  <span key={role}>{role}</span>
+                ))}
               </div>
-            )}
-          </div>
-        ))}
+              <BlogSummaryCard blog={blog} categoryLookup={categoryLookup} cityLookup={cityLookup} />
+              {blog.creatorId === auth.userId && (
+                <div className="action-row">
+                  <Link className="button-link" to={`/blogs/${blog.blogId}/edit`}>
+                    Edit
+                  </Link>
+                  <Button type="button" variant="destructive" onClick={() => setDeleteTarget(blog)}>
+                    Delete
+                  </Button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       <Dialog open={Boolean(deleteTarget)} onOpenChange={(open) => !open && setDeleteTarget(null)}>

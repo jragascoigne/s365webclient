@@ -63,7 +63,6 @@ export function EditBlogPage() {
         Back to blog
       </Link>
       <div className="section-header">
-        <p className="eyebrow">Managing Blogs</p>
         <h2>Edit blog</h2>
       </div>
       {loading && <Notice>Loading blog...</Notice>}
